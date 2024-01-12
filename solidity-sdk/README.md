@@ -29,7 +29,7 @@ Include either interfaces, or the source code, as you need to deploy your own Lo
 
 ## Using Locksmith In Your Smart Contracts
 
-There are a number of ways to interact with Locksmith in your smart contracts. Assuming you are accepting Locksmith keys for token gating, you can use the supplied LocksmithKeyChecker extension which provides the _onlyKeyHolder()_ modifier.
+There are a number of ways to interact with Locksmith in your smart contracts. Assuming you are accepting Locksmith keys for token gating, you can use the supplied LocksmithKeyChecker extension which provides the _onlyKeyHolder() and onlyKeyOrRootHolder()_ modifiers.
 
 
 
