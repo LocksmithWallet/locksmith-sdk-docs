@@ -31,5 +31,40 @@ Include either interfaces, or the source code, as you need to deploy your own Lo
 
 There are a number of ways to interact with Locksmith in your smart contracts. Assuming you are accepting Locksmith keys for token gating, you can use the supplied LocksmithKeyChecker extension which provides the _onlyKeyHolder() and onlyKeyOrRootHolder()_ modifiers.
 
+Below is an example on how you would utilize this.
 
+<pre class="language-solidity"><code class="lang-solidity"><strong>pragma solidity ^0.8.23;
+</strong><strong>import {LocksmithKeyChecker} from 'locksmith-core/src/utils/LocksmithKeyChecker.sol';
+</strong><strong>
+</strong><strong>contract MyApp is LocksmithKeyChecker {
+</strong><strong>     address public locksmith;
+</strong><strong>     constructor(address _locksmith) {
+</strong><strong>         locksmith = _locksmith;
+</strong><strong>     }
+</strong><strong>     
+</strong><strong>     function doThing(uint256 keyId) onlyKeyHolder(locksmith, keyId) {
+</strong><strong>        // business logic for holding that key
+</strong><strong>     }
+</strong><strong>     
+</strong><strong>     function enableAdminToo(uint256 keyId) onlyKeyOrRootHolder(locksmith, keyId) {
+</strong><strong>        // keyId holders, or root key holders of the same ring can do this     
+</strong><strong>     }
+</strong><strong>}
+</strong></code></pre>
 
+You can also respond to receiving a Locksmith key by implementing ERC1155Holder and overriding _onERC1155Received()_. You can use the Locksmith SDK modifier onlyValidLocksmiths() to ensure that all received ERC1155 tokens are valid Locksmith keys.
+
+```solidity
+pragma solidity ^0.8.23;
+import "openzeppelin-contracts/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import {LocksmithKeyChecker} from 'locksmith-core/src/utils/LocksmithKeyChecker.sol';
+
+contract MyApp is ERC1155Holder, LocksmithKeyChecker {
+     function onERC1155Received(address, address, uint256, uint256, bytes memory)
+        public virtual override(ERC1155Holder) onlyValidLocksmiths() returns (bytes4) {
+         // you know its a locksmith key now
+     }
+}
+```
+
+In the next sections, we will go over all available Locksmith APIs and advanced integration patterns supported.&#x20;
