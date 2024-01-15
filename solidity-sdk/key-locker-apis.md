@@ -22,7 +22,7 @@ The following functions are provided as part of the IKeyLocker interface. The im
 
 ## useKeys
 
-A message sender is assuemd to be calling this method while holding a soulbound version of the key they expect to use. If held, the caller's provided destination and calldata will be used to **send** the key into the destination contract with associated metadata.
+A message sender is assumed to be calling this method while holding a soulbound version of the key they expect to use. If held, the caller's provided destination and calldata will be used to **send** the key into the destination contract with associated metadata.
 
 It is fully expected that the key will be returned to the locker by the end of the transaction, or the entire transaction will revert. This protects the key from being arbitrarily stolen.
 
@@ -84,3 +84,67 @@ function redeemKeys(
 ```
 
 ## Emitted Events
+
+The following events are defined in the Key Locker interface and are emitted during operations. All standard ERC1155 events also apply with regards to token activity.
+
+### keyLockerDeposit
+
+```solidity
+/**
+ * keyLockerDeposit
+ *
+ * This event is emitted when a key is sent to the contract.
+ *
+ * @param operator         the message sender that deposited the key
+ * @param locksmith        the address of the locksmith the key is for
+ * @param keyId            the ID of the key that was deposited
+ * @param amount           the amount of keys deposited for locker use
+ */
+ event keyLockerDeposit(
+        address operator,
+        address locksmith,
+        uint256 keyId,
+        uint256 amount);
+```
+
+### keyLockerLoan
+
+```solidity
+/**
+ * keyLockerLoan
+ *
+ * This event is fired when a key is loaned out of the locker.
+ * Returns will register keyLockerDeposit events.
+ *
+ * @param operator the key holder who is initiating the loan
+ * @param locksmith the locksmith contract of the key loaned out
+ * @param keyId the ID of the key loaned out
+ * @param count the number of keys successfully loaned out
+ * @param destination where the keys were sent.
+ */
+event keyLockerLoan(
+    address operator,
+    address locksmith,
+    uint256 keyId,
+    uint256 count,
+    address destination);
+```
+
+### keyLockerWithdrawal
+
+```solidity
+/**
+ * keyLockerWithdrawal
+ *
+ * This event is emitted when a key is removed from the contract
+ * permanently, which can only be done by the trust root key holder.
+ *
+ * @param operator         the message sender that removed and received the key
+ * @param locksmith        the address of the locksmith the key is for
+ * @param rootKeyId        the verified root key ID that was used for removal
+ * @param keyId            the ID of the key that was removed
+ * @param amount           the amount of keys redeemed from locker use
+ */
+ event keyLockerWithdrawal(address operator, address locksmith, uint256 rootKeyId, uint256 keyId, uint256 amount);
+```
+
