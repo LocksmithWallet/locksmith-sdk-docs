@@ -1,2 +1,0 @@
-# ☕ Wagmi Hooks
-
